@@ -38,10 +38,7 @@ This CloudFormation template will compelte the following:
 1. Create a SageMaker Notebook Instance (and optional VPC configuration) for your POC
 1. Clone the POC codebase onto the Notebook Instance.
 
-| Region                       | Deploy Link |
-|:-----------------------------|:------------|
-| `ap-southeast-1` (Singapore) | [![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=ForecastPOC&templateURL=https://public-asean-ml-pocs-ap-southeast-1.s3-ap-southeast-1.amazonaws.com/forecast/ForecastPOC.yaml) |
-| `us-east-1` (US N. Virginia) | [![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=ForecastPOC&templateURL=https://public-asean-ml-pocs-us-east-1.s3.amazonaws.com/forecast/ForecastPOC.yaml) |
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=ForecastPOC&templateURL=https://chriskingpartnershare.s3.amazonaws.com/ForecastPOC.yaml)
 
 Follow along with the screenshots below if you have any questions about deploying the stack.
 
@@ -96,42 +93,36 @@ On this page you will see a list of any SageMaker notebooks you have running, si
 This will open the Jupyter environment for your POC, think of it as a web based data science IDE if you are not familiar with it. It should Automatically open the `ForecastPOC` folder for you, but if it does not do that by clicking on the folder icon in the browser on the left side of the screen and follow the documentation below to get started with your POC!
 
 
-## Setting Up Your Environment
 
-Open [0. Environment Setup.ipynb](0.%20Environment%20Setup.ipynb) and follow along to set up Amazon S3 and AWS IAM resources required for file storage and permissions management in the cloud, ready for your Amazon Forecast project.
+## Validating and Importing Target Time Series Data
 
-## Preparing Target Time-Series Data
+Open [1.Validate_and_Import_Target_Time_Series_Data.ipynb](1.Validate_and_Import_Target_Time_Series_Data.ipynb) and follow along there.
 
-Open [1. Preparing Target Time-Series Data.ipynb](1.%20Preparing%20Target%20Time-Series%20Data.ipynb) and follow along to download a sample dataset and prepare a [target time-series](https://docs.aws.amazon.com/forecast/latest/dg/howitworks-datasets-groups.html) file (the quantity you want to forecast) and upload it to Amazon S3.
+Once this has completed you can move onto prepping your Related Time Series data though you may not want to actually delete it after the import completes. 
+If the data resides within your DatasetGroup then models will use it automatically when you train them and you are not able to determine the impact of just your base time series data easily.
 
-## Getting Started with Amazon Forecast
+## Creating and Evaluating Your First Predictors
 
-Follow through the process of creating your Amazon Forecast project, importing data, training your first models and evaluating their results - in either:
+In Amazon Forecast a model that has been trained on your data is called a Predictor, the notebook below will guide you through using the data you imported earlier to build your first predictors. At the end there is a bonus bit on running AutoML to determine the best. This is advised to be done before going home for the day as the process will take a number of hours to complete.
 
-- The Amazon Forecast console, with [2a. Getting Started with Forecast (Console).ipynb](2a.%20Getting%20Started%20with%20Forecast%20(Console).ipynb), or
-- The AWS SDK for Python, with [2b. Getting Started with Forecast (Python SDK).ipynb](2b.%20Getting%20Started%20with%20Forecast%20(Python%20SDK).ipynb)
+Open [2.Create_and_Evaluate_Predictors.ipynb](2.Create_and_Evaluate_Predictors.ipynb) and follow along to build these Predictors and see their results.
 
-## Preparing Related Time-Series Data
+## Validating and Importing Related Time Series Data
 
-Amazon Forecast can certainly generate predictions using only the target data, but the real power of the service comes into play when adding related time series information to facilitate better understanding of external signals, as well as item metadata that allows advanced models to make assumptions about how a time series may behave when missing chunks of information.
+Amazon Forecast can certainly generate predictions using only the target data but the real power of the service comes into play when adding related time series information to facilitate better understanding of external signals, as well as item metadata that allows DeepAR+ to make assumptions about how a time series may behave when missing chunks of information.
 
-Open [3. Preparing Related Time-Series Data.ipynb](3.%20Preparing%20Related%20Time-Series%20Data.ipynb) and follow along there to prepare additional data features to use in Amazon Forecast.
+Open [3.Validate_and_Import_Related_Time_Series_Data.ipynb](3.Validate_and_Import_Related_Time_Series_Data.ipynb) and follow along there to prepare the dataset for Amazon Forecast.
 
-## Incorporating RTS Data
+## Creating and Evaluating Related Time Series Enabled Predictors
 
-Follow through the process of importing this newly prepared RTS data and creating and evaluating new forecasts, in either:
+During this section you'll only be creating new models with Prophet and DeepAR+ this is because they are the only algorithms to incorporate related time series into their forecasts at this time within the service. As existing algorithms are modified or new ones are introduced this section will expand to cover those.
 
-- The Amazon Forecast console, with [4a. Incorporating RTS Data (Console).ipynb](4a.%20Incorporating%20RTS%20Data%20(Console).ipynb), or
-- The AWS SDK for Python, with [4b. Incorporating RTS Data (Python SDK).ipynb](4b.%20Incorporating%20RTS%20Data%20(Python%20SDK).ipynb)
+To get started simply open [4.Create_and_Evaluate_Related_Time_Series_Predictors.ipynb](4.Create_and_Evaluate_Related_Time_Series_Predictors.ipynb) this will be the last section of the POC that is guided and the rest will be an exploratory analysis to determine the value of any improvements.
 
 ## Next Steps
 
-After exploring Amazon Forecast with sample data, it's time to try producing models on your own real-world data; for which you can use these notebooks as a guide to get started.
-
-The next step will be to compare the results from Forecast against your previous/current forecasting approach and determine which is more performant; considering carefully the potential benefits of using *probabilistic* forecasts generated by the Amazon Forecast service, rather than simple point-forecast methods.
-
-As shown in the notebooks, data is exportable in JSON/CSV format so it's easy to develop automated procedures and integrations as you consider your path to production. Check out the [official sample notebooks](https://github.com/aws-samples/amazon-forecast-samples) and the [Amazon Forecast blog](https://aws.amazon.com/blogs/machine-learning/category/artificial-intelligence/amazon-forecast/) for more great resources to help get you started - such as [this example on automating forecasting pipelines](https://aws.amazon.com/blogs/machine-learning/building-ai-powered-forecasting-automation-with-amazon-forecast-by-applying-mlops/).
+The next step is to either compare the results from Forecast against a previous approach and determine which one is more performant, if Forecast is more performant or there is no existing system then the path to production is determining how to integrate the results with planners, analysts, or other software solutions. The data again is exportable in JSON or CSV so it is easy to develop automated procedures for this integration.
 
 ## Cleanup
 
-The scripts in this PoC provision various Forecast, S3, and IAM resources. If you ran this PoC in your own account and would like to avoid ongoing charges related to these resources, open [Cleanup.ipynb](Cleanup.ipynb) and run the cleanup scripts provided there. Wait for the scripts to complete, then tear down the CloudFormation stack you created at the beginning of these instructions.
+The scripts in this POC provision various Forecast, S3, and IAM resources. If you ran this POC in your own account and would like to avoid ongoing charges related to these resources, open [Cleanup.ipynb](Cleanup.ipynb) and run the cleanup scripts provided there. Wait for the scripts to complete, then tear down the CloudFormation stack you created at the beginning of these instructions. 
